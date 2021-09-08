@@ -16,6 +16,8 @@ List<String> craftingTableContains = List<String>.filled(9, '');
 
 int currentRecipeId = 0;
 ValueNotifier<int> recipeChangeNotifier = ValueNotifier<int>(0);
+ValueNotifier<int> healthNotifier = ValueNotifier<int>(3);
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -96,41 +98,7 @@ class _GameWidgetState extends State<GameWidget> {
                     color: Colors.blue,
                     borderRadius: BorderRadius.all(Radius.circular(16))),
                 alignment: Alignment.center,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Container(
-                        height: 32,
-                        width: 32,
-                        child: Image.asset(
-                          'assets/ui/heart.png',
-                          fit: BoxFit.fill,
-                          filterQuality: FilterQuality.none,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 32,
-                      width: 32,
-                      child: Image.asset(
-                        'assets/ui/heart.png',
-                        fit: BoxFit.fill,
-                        filterQuality: FilterQuality.none,
-                      ),
-                    ),
-                    Container(
-                      height: 32,
-                      width: 32,
-                      child: Image.asset(
-                        'assets/ui/heart.png',
-                        fit: BoxFit.fill,
-                        filterQuality: FilterQuality.none,
-                      ),
-                    )
-                  ],
-                ),
+                child: HealthPanel(),
               ),
             ),
           ),
@@ -173,6 +141,52 @@ class _GameWidgetState extends State<GameWidget> {
   }
 }
 
+class HealthPanel extends StatelessWidget {
+  HealthPanel({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<int>(
+        valueListenable: healthNotifier,
+        builder: (BuildContext context, int value, Widget child) {
+          print(value);
+          List<HealthHeart> hearts = List<HealthHeart>.generate(
+              3, (i) => i + 1 > value ? HealthHeart(false) : HealthHeart(true));
+          print(hearts.last.isFull);
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: hearts,
+          );
+        });
+  }
+}
+
+class HealthHeart extends StatelessWidget {
+  final bool isFull;
+  const HealthHeart(this.isFull);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 32,
+      width: 32,
+      child: (isFull
+          ? Image.asset(
+              'assets/ui/heart.png',
+              fit: BoxFit.fill,
+              filterQuality: FilterQuality.none,
+            )
+          : Image.asset(
+              'assets/ui/heart_empty.png',
+              fit: BoxFit.fill,
+              filterQuality: FilterQuality.none,
+            )),
+    );
+  }
+}
+
 class AcceptButton extends StatelessWidget {
   const AcceptButton({
     Key key,
@@ -188,8 +202,9 @@ class AcceptButton extends StatelessWidget {
               .where((e) => e != recipeChangeNotifier.value)
               .toList();
           recipeChangeNotifier.value = l[Random().nextInt(l.length)];
-          print(
-              'table: $craftingTableContains, recipe: ${recipes[recipeChangeNotifier.value]}');
+        } else {
+          healthNotifier.value--;
+          print(healthNotifier.value);
         }
       },
       child: Container(
