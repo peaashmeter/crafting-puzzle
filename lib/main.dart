@@ -46,46 +46,14 @@ class _GameWidgetState extends State<GameWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
-            child: Container(
-              decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        offset: Offset(0, 3),
-                        blurRadius: 2,
-                        spreadRadius: 0.5)
-                  ],
-                  color: Colors.blue,
-                  borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(16))),
-              alignment: Alignment.center,
-              child: ValueListenableBuilder<int>(
-                  valueListenable: recipeChangeNotifier,
-                  builder: (BuildContext context, int value, Widget child) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(names[value]),
-                        Container(
-                          width: 64,
-                          child: Image.asset(
-                              'assets/recipes/${recipePictureIDs[value]}.png'),
-                        )
-                      ],
-                    );
-                  }),
-            ),
-          ),
-          FractionallySizedBox(
-            widthFactor: 0.5,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
+    return Container(
+      color: Colors.amber,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: Container(
                 decoration: BoxDecoration(
                     boxShadow: [
@@ -96,46 +64,81 @@ class _GameWidgetState extends State<GameWidget> {
                           spreadRadius: 0.5)
                     ],
                     color: Colors.blue,
-                    borderRadius: BorderRadius.all(Radius.circular(16))),
+                    borderRadius:
+                        BorderRadius.vertical(bottom: Radius.circular(16))),
                 alignment: Alignment.center,
-                child: HealthPanel(),
+                child: ValueListenableBuilder<int>(
+                    valueListenable: recipeChangeNotifier,
+                    builder: (BuildContext context, int value, Widget child) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(names[value]),
+                          Container(
+                            width: 64,
+                            child: Image.asset(
+                                'assets/recipes/${recipePictureIDs[value]}.png'),
+                          )
+                        ],
+                      );
+                    }),
               ),
             ),
-          ),
-          Expanded(flex: 1, child: Container()),
-          Expanded(
-            flex: 2,
-            child: AcceptButton(),
-          ),
-          Expanded(flex: 1, child: Container()),
-          Expanded(
-            flex: 7,
-            child: ValueListenableBuilder<int>(
-                valueListenable: recipeChangeNotifier,
-                builder: (BuildContext context, int value, Widget child) {
-                  return AspectRatio(
-                    aspectRatio: 1,
-                    child: CraftingTable(List<ValueNotifier<String>>.generate(
-                        9, (i) => ValueNotifier<String>(''))),
-                  );
-                }),
-          ),
-          Expanded(flex: 2, child: Container()),
-          Expanded(
-            flex: 2,
-            child: Container(
-              alignment: Alignment.center,
-              color: Colors.blue,
+            FractionallySizedBox(
+              widthFactor: 0.5,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            offset: Offset(0, 3),
+                            blurRadius: 2,
+                            spreadRadius: 0.5)
+                      ],
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.all(Radius.circular(16))),
+                  alignment: Alignment.center,
+                  child: HealthPanel(),
+                ),
+              ),
+            ),
+            Expanded(flex: 1, child: Container()),
+            Expanded(
+              flex: 2,
+              child: AcceptButton(),
+            ),
+            Expanded(flex: 1, child: Container()),
+            Expanded(
+              flex: 7,
               child: ValueListenableBuilder<int>(
                   valueListenable: recipeChangeNotifier,
                   builder: (BuildContext context, int value, Widget child) {
-                    return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: makeStuffList(recipes[value]));
+                    return AspectRatio(
+                      aspectRatio: 1,
+                      child: CraftingTable(List<ValueNotifier<String>>.generate(
+                          9, (i) => ValueNotifier<String>(''))),
+                    );
                   }),
             ),
-          ),
-        ],
+            Expanded(flex: 2, child: Container()),
+            Expanded(
+              flex: 2,
+              child: Container(
+                alignment: Alignment.center,
+                color: Colors.blue,
+                child: ValueListenableBuilder<int>(
+                    valueListenable: recipeChangeNotifier,
+                    builder: (BuildContext context, int value, Widget child) {
+                      return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: makeStuffList(recipes[value]));
+                    }),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -187,10 +190,51 @@ class HealthHeart extends StatelessWidget {
   }
 }
 
-class AcceptButton extends StatelessWidget {
+class AcceptButton extends StatefulWidget {
   const AcceptButton({
     Key key,
   }) : super(key: key);
+
+  @override
+  _AcceptButtonState createState() => _AcceptButtonState();
+}
+
+class _AcceptButtonState extends State<AcceptButton>
+    with TickerProviderStateMixin {
+  AnimationController controller;
+  Animation acceptAnimation;
+  Animation declineAnimation;
+  Animation _animation;
+
+  void initState() {
+    super.initState();
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    declineAnimation = TweenSequence<Color>([
+      TweenSequenceItem<Color>(
+          tween: ColorTween(begin: Colors.blue, end: Colors.red)
+              .chain(CurveTween(curve: Curves.ease)),
+          weight: 50),
+      TweenSequenceItem<Color>(
+          tween: ColorTween(begin: Colors.red, end: Colors.blue)
+              .chain(CurveTween(curve: Curves.ease)),
+          weight: 50)
+    ]).animate(controller);
+    acceptAnimation = TweenSequence<Color>([
+      TweenSequenceItem<Color>(
+          tween: ColorTween(begin: Colors.blue, end: Colors.green)
+              .chain(CurveTween(curve: Curves.ease)),
+          weight: 50),
+      TweenSequenceItem<Color>(
+          tween: ColorTween(begin: Colors.green, end: Colors.blue)
+              .chain(CurveTween(curve: Curves.ease)),
+          weight: 50)
+    ]).animate(controller);
+    _animation = acceptAnimation
+      ..addListener(() {
+        setState(() {});
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -198,17 +242,28 @@ class AcceptButton extends StatelessWidget {
       onTap: () {
         if (compareRecipesDeeply(
             craftingTableContains, recipes[recipeChangeNotifier.value])) {
-          var l = List.generate(recipes.length, (i) => i)
-              .where((e) => e != recipeChangeNotifier.value)
-              .toList();
-          recipeChangeNotifier.value = l[Random().nextInt(l.length)];
+          changeRecipe();
+          _animation = acceptAnimation;
+          controller.forward().then((value) => controller.reset());
         } else {
           healthNotifier.value--;
-          print(healthNotifier.value);
+          changeRecipe();
+          _animation = declineAnimation;
+          controller.forward().then((value) => controller.reset());
         }
       },
       child: Container(
-        decoration: BoxDecoration(color: Colors.blue, shape: BoxShape.circle),
+        decoration: BoxDecoration(
+          color: _animation.value,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                offset: Offset(0, 3),
+                blurRadius: 2,
+                spreadRadius: 0.5)
+          ],
+        ),
         child: FittedBox(
           child: Padding(
             padding: const EdgeInsets.all(2.0),
@@ -221,6 +276,13 @@ class AcceptButton extends StatelessWidget {
       ),
     );
   }
+
+  void changeRecipe() {
+    var l = List.generate(recipes.length, (i) => i)
+        .where((e) => e != recipeChangeNotifier.value)
+        .toList();
+    recipeChangeNotifier.value = l[Random().nextInt(l.length)];
+  }
 }
 
 class CraftingTable extends StatelessWidget {
@@ -232,177 +294,84 @@ class CraftingTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      color: Colors.blue,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              offset: Offset(0, 3),
+              blurRadius: 2,
+              spreadRadius: 0.5)
+        ],
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                flex: 1,
-                child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: ValueListenableBuilder(
-                        valueListenable: craftingSlotNotifierList[0],
-                        builder:
-                            (BuildContext context, String value, Widget child) {
-                          craftingTableContains[0] = value;
-                          //print(craftingTableContains);
-                          return AspectRatio(
-                            aspectRatio: 1,
-                            child: CraftingSlot(0, craftingSlotNotifierList[0]),
-                          );
-                        })),
-              ),
-              Expanded(
-                flex: 1,
-                child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: ValueListenableBuilder(
-                        valueListenable: craftingSlotNotifierList[1],
-                        builder:
-                            (BuildContext context, String value, Widget child) {
-                          craftingTableContains[1] = value;
-                          //print(craftingTableContains);
-                          return AspectRatio(
-                            aspectRatio: 1,
-                            child: CraftingSlot(1, craftingSlotNotifierList[1]),
-                          );
-                        })),
-              ),
-              Expanded(
-                flex: 1,
-                child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: ValueListenableBuilder(
-                        valueListenable: craftingSlotNotifierList[2],
-                        builder:
-                            (BuildContext context, String value, Widget child) {
-                          craftingTableContains[2] = value;
-                          //print(craftingTableContains);
-                          return AspectRatio(
-                            aspectRatio: 1,
-                            child: CraftingSlot(2, craftingSlotNotifierList[2]),
-                          );
-                        })),
-              ),
-            ],
-          ),
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: List<Widget>.generate(
+                  3,
+                  (i) => Expanded(
+                      flex: 1,
+                      child: ValueListenableBuilder(
+                          valueListenable: craftingSlotNotifierList[i],
+                          builder: (BuildContext context, String value,
+                              Widget child) {
+                            craftingTableContains[i] = value;
+                            return AspectRatio(
+                              aspectRatio: 1,
+                              child: FractionallySizedBox(
+                                  widthFactor: 0.9,
+                                  heightFactor: 0.9,
+                                  child: CraftingSlot(
+                                      i, craftingSlotNotifierList[i])),
+                            );
+                          })))),
           Expanded(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ValueListenableBuilder(
-                            valueListenable: craftingSlotNotifierList[3],
-                            builder: (BuildContext context, String value,
-                                Widget child) {
-                              craftingTableContains[3] = value;
-                              //print(craftingTableContains);
-                              return AspectRatio(
-                                aspectRatio: 1,
-                                child: CraftingSlot(
-                                    3, craftingSlotNotifierList[3]),
-                              );
-                            })),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ValueListenableBuilder(
-                            valueListenable: craftingSlotNotifierList[4],
-                            builder: (BuildContext context, String value,
-                                Widget child) {
-                              craftingTableContains[4] = value;
-                              //print(craftingTableContains);
-                              return AspectRatio(
-                                aspectRatio: 1,
-                                child: CraftingSlot(
-                                    4, craftingSlotNotifierList[4]),
-                              );
-                            })),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ValueListenableBuilder(
-                            valueListenable: craftingSlotNotifierList[5],
-                            builder: (BuildContext context, String value,
-                                Widget child) {
-                              craftingTableContains[5] = value;
-                              //print(craftingTableContains);
-                              return AspectRatio(
-                                aspectRatio: 1,
-                                child: CraftingSlot(
-                                    5, craftingSlotNotifierList[5]),
-                              );
-                            })),
-                  ),
-                ]),
-          ),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List<Widget>.generate(
+                      3,
+                      (i) => Expanded(
+                          flex: 1,
+                          child: ValueListenableBuilder(
+                              valueListenable: craftingSlotNotifierList[i + 3],
+                              builder: (BuildContext context, String value,
+                                  Widget child) {
+                                craftingTableContains[i + 3] = value;
+                                return AspectRatio(
+                                  aspectRatio: 1,
+                                  child: FractionallySizedBox(
+                                    widthFactor: 0.9,
+                                    heightFactor: 0.9,
+                                    child: CraftingSlot(
+                                        i + 3, craftingSlotNotifierList[i + 3]),
+                                  ),
+                                );
+                              }))))),
           Expanded(
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ValueListenableBuilder(
-                            valueListenable: craftingSlotNotifierList[6],
-                            builder: (BuildContext context, String value,
-                                Widget child) {
-                              craftingTableContains[6] = value;
-                              //print(craftingTableContains);
-                              return AspectRatio(
-                                aspectRatio: 1,
-                                child: CraftingSlot(
-                                    6, craftingSlotNotifierList[6]),
-                              );
-                            })),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ValueListenableBuilder(
-                            valueListenable: craftingSlotNotifierList[7],
-                            builder: (BuildContext context, String value,
-                                Widget child) {
-                              craftingTableContains[7] = value;
-                              //print(craftingTableContains);
-                              return AspectRatio(
-                                aspectRatio: 1,
-                                child: CraftingSlot(
-                                    7, craftingSlotNotifierList[7]),
-                              );
-                            })),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: ValueListenableBuilder(
-                            valueListenable: craftingSlotNotifierList[8],
-                            builder: (BuildContext context, String value,
-                                Widget child) {
-                              craftingTableContains[8] = value;
-                              //print(craftingTableContains);
-                              return AspectRatio(
-                                aspectRatio: 1,
-                                child: CraftingSlot(
-                                    8, craftingSlotNotifierList[8]),
-                              );
-                            })),
-                  ),
-                ]),
-          )
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List<Widget>.generate(
+                      3,
+                      (i) => Expanded(
+                          flex: 1,
+                          child: ValueListenableBuilder(
+                              valueListenable: craftingSlotNotifierList[i + 6],
+                              builder: (BuildContext context, String value,
+                                  Widget child) {
+                                craftingTableContains[i + 6] = value;
+                                return AspectRatio(
+                                  aspectRatio: 1,
+                                  child: FractionallySizedBox(
+                                    widthFactor: 0.9,
+                                    heightFactor: 0.9,
+                                    child: CraftingSlot(
+                                        i + 6, craftingSlotNotifierList[i + 6]),
+                                  ),
+                                );
+                              })))))
         ],
       ),
     );
@@ -428,7 +397,12 @@ class _CraftingSlotState extends State<CraftingSlot> {
           onTap: () => widget._notifier.value = '',
           child: Container(
             decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(-1, -1),
+                  )
+                ],
+                color: Colors.grey.shade400,
                 borderRadius: BorderRadius.all(Radius.circular(16))),
             child: ValueListenableBuilder<String>(
                 valueListenable: widget._notifier,
@@ -483,7 +457,7 @@ List<Widget> makeStuffList(List<String> recipe) {
               color: Colors.blueGrey,
               borderRadius: BorderRadius.all(Radius.circular(16)))),
       child: Container(
-          color: Colors.pink,
+          //color: Colors.pink,
           height: 64,
           width: 64,
           child: Image.asset('assets/items/${ingredients[i]}.png')),
