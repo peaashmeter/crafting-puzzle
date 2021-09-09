@@ -3,32 +3,129 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:minecraft/defeat.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 List<List<String>> recipes = [
   ['string', 'string', '', 'string', 'slimeball', '', '', '', 'string'],
-  ['iron_ingot', 'iron_ingot', 'iron_ingot', '', 'stick', '', '', 'stick', '']
+  ['iron_ingot', 'iron_ingot', 'iron_ingot', '', 'stick', '', '', 'stick', ''],
+  [
+    'cobblestone',
+    'cobblestone',
+    'cobblestone',
+    'cobblestone',
+    '',
+    'cobblestone',
+    'cobblestone',
+    'redstone_dust',
+    'cobblestone'
+  ],
+  [
+    '',
+    'redstone_dust',
+    '',
+    'redstone_dust',
+    'glowstone',
+    'redstone_dust',
+    '',
+    'redstone_dust',
+    ''
+  ],
+  [
+    'planks',
+    'planks',
+    'planks',
+    'cobblestone',
+    'iron_ingot',
+    'cobblestone',
+    'cobblestone',
+    'redstone_dust',
+    'cobblestone'
+  ],
+  [
+    'redstone_dust',
+    'redstone_dust',
+    'redstone_dust',
+    'redstone_dust',
+    'redstone_dust',
+    'redstone_dust',
+    'redstone_dust',
+    'redstone_dust',
+    'redstone_dust'
+  ],
+  [
+    'glass',
+    'glass',
+    'glass',
+    'nether_quartz',
+    'nether_quartz',
+    'nether_quartz',
+    'slab',
+    'slab',
+    'slab'
+  ]
 ];
 
-List<String> names = ['Lead', 'Iron Pickaxe'];
-List<String> recipePictureIDs = ['lead', 'iron_pickaxe'];
+List<String> names = [
+  'Lead',
+  'Iron Pickaxe',
+  'Dropper',
+  'Redstone Lamp',
+  'Piston',
+  'Block of Redstone',
+  'Daylight Detector'
+];
 
 List<String> craftingTableContains = List<String>.filled(9, '');
 
-int currentRecipeId = 0;
-ValueNotifier<int> recipeChangeNotifier = ValueNotifier<int>(0);
+ValueNotifier<int> recipeChangeNotifier =
+    ValueNotifier<int>(names.length - 1); //length is for debug
 ValueNotifier<int> healthNotifier = ValueNotifier<int>(3);
+
+AudioPlayer audioPlayer = AudioPlayer();
+AudioCache cache = AudioCache();
+
+final Color mainColor = Color(0xff7986cb);
+final Color lightColor = Color(0xffaab6fe);
+final Color secondaryColor = Color(0xffffa000);
+final Color secondaryLightColor = Color(0xffffd149);
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MaterialApp(
       title: 'Craft Puzzle',
+      theme: ThemeData(appBarTheme: AppBarTheme(color: mainColor)),
       home: Scaffold(
         appBar: AppBar(
+          backgroundColor: mainColor,
           title: Text('Crafting Puzzle'),
         ),
         body: GameWidget(),
       )));
+}
+
+class Game extends StatefulWidget {
+  @override
+  _GameState createState() => _GameState();
+}
+
+class _GameState extends State<Game> {
+  @override
+  void initState() {
+    setToDefault();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Crafting Puzzle'),
+      ),
+      body: GameWidget(),
+    );
+  }
 }
 
 class GameWidget extends StatefulWidget {
@@ -47,7 +144,16 @@ class _GameWidgetState extends State<GameWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.amber,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            secondaryLightColor,
+            secondaryColor,
+          ],
+        ),
+      ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -63,7 +169,14 @@ class _GameWidgetState extends State<GameWidget> {
                           blurRadius: 2,
                           spreadRadius: 0.5)
                     ],
-                    color: Colors.blue,
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        lightColor,
+                        mainColor,
+                      ],
+                    ),
                     borderRadius:
                         BorderRadius.vertical(bottom: Radius.circular(16))),
                 alignment: Alignment.center,
@@ -73,11 +186,15 @@ class _GameWidgetState extends State<GameWidget> {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(names[value]),
+                          Text(names[value],
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500)),
                           Container(
                             width: 64,
                             child: Image.asset(
-                                'assets/recipes/${recipePictureIDs[value]}.png'),
+                                'assets/recipes/${names[value].toLowerCase().replaceAll(' ', '_')}.png'),
                           )
                         ],
                       );
@@ -97,7 +214,14 @@ class _GameWidgetState extends State<GameWidget> {
                             blurRadius: 2,
                             spreadRadius: 0.5)
                       ],
-                      color: Colors.blue,
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          lightColor,
+                          mainColor,
+                        ],
+                      ),
                       borderRadius: BorderRadius.all(Radius.circular(16))),
                   alignment: Alignment.center,
                   child: HealthPanel(),
@@ -127,7 +251,23 @@ class _GameWidgetState extends State<GameWidget> {
               flex: 2,
               child: Container(
                 alignment: Alignment.center,
-                color: Colors.blue,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        offset: Offset(0, -3),
+                        blurRadius: 2,
+                        spreadRadius: 0.5)
+                  ],
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      lightColor,
+                      mainColor,
+                    ],
+                  ),
+                ),
                 child: ValueListenableBuilder<int>(
                     valueListenable: recipeChangeNotifier,
                     builder: (BuildContext context, int value, Widget child) {
@@ -212,21 +352,21 @@ class _AcceptButtonState extends State<AcceptButton>
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
     declineAnimation = TweenSequence<Color>([
       TweenSequenceItem<Color>(
-          tween: ColorTween(begin: Colors.blue, end: Colors.red)
+          tween: ColorTween(begin: mainColor, end: Colors.red)
               .chain(CurveTween(curve: Curves.ease)),
           weight: 50),
       TweenSequenceItem<Color>(
-          tween: ColorTween(begin: Colors.red, end: Colors.blue)
+          tween: ColorTween(begin: Colors.red, end: mainColor)
               .chain(CurveTween(curve: Curves.ease)),
           weight: 50)
     ]).animate(controller);
     acceptAnimation = TweenSequence<Color>([
       TweenSequenceItem<Color>(
-          tween: ColorTween(begin: Colors.blue, end: Colors.green)
+          tween: ColorTween(begin: mainColor, end: Colors.green)
               .chain(CurveTween(curve: Curves.ease)),
           weight: 50),
       TweenSequenceItem<Color>(
-          tween: ColorTween(begin: Colors.green, end: Colors.blue)
+          tween: ColorTween(begin: Colors.green, end: mainColor)
               .chain(CurveTween(curve: Curves.ease)),
           weight: 50)
     ]).animate(controller);
@@ -242,14 +382,21 @@ class _AcceptButtonState extends State<AcceptButton>
       onTap: () {
         if (compareRecipesDeeply(
             craftingTableContains, recipes[recipeChangeNotifier.value])) {
+          playSound('accept');
           changeRecipe();
           _animation = acceptAnimation;
           controller.forward().then((value) => controller.reset());
         } else {
           healthNotifier.value--;
-          changeRecipe();
-          _animation = declineAnimation;
-          controller.forward().then((value) => controller.reset());
+          if (healthNotifier.value != 0) {
+            playSound('decline');
+            changeRecipe();
+            _animation = declineAnimation;
+            controller.forward().then((value) => controller.reset());
+          } else {
+            setToDefault();
+            gotoDefeatScreen();
+          }
         }
       },
       child: Container(
@@ -275,6 +422,11 @@ class _AcceptButtonState extends State<AcceptButton>
         ),
       ),
     );
+  }
+
+  void gotoDefeatScreen() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => DefeatScreen()));
   }
 
   void changeRecipe() {
@@ -390,11 +542,25 @@ class CraftingSlot extends StatefulWidget {
 class _CraftingSlotState extends State<CraftingSlot> {
   @override
   Widget build(BuildContext context) {
-    return DragTarget(
-      builder: (BuildContext context, List<Object> candidateData,
-          List<dynamic> rejectedData) {
-        return GestureDetector(
-          onTap: () => widget._notifier.value = '',
+    return DragTarget(builder: (BuildContext context,
+        List<Object> candidateData, List<dynamic> rejectedData) {
+      return GestureDetector(
+        onTap: () {
+          if (widget._notifier.value != '') {
+            widget._notifier.value = '';
+            playSound('tap1');
+          }
+        },
+        child: Draggable<String>(
+          data: widget._notifier.value,
+          onDragCompleted: () => widget._notifier.value = '',
+          feedback: Container(
+            width: 64,
+            height: 64,
+            child: widget._notifier.value != ''
+                ? Image.asset('assets/items/${widget._notifier.value}.png')
+                : Container(),
+          ),
           child: Container(
             decoration: BoxDecoration(
                 boxShadow: [
@@ -412,10 +578,14 @@ class _CraftingSlotState extends State<CraftingSlot> {
                       : Container();
                 }),
           ),
-        );
-      },
-      onAccept: (String itemId) => widget._notifier.value = itemId,
-    );
+        ),
+      );
+    }, onAccept: (String itemId) {
+      if (itemId != '') {
+        widget._notifier.value = itemId;
+        playSound('tap');
+      }
+    });
   }
 }
 
@@ -453,9 +623,7 @@ List<Widget> makeStuffList(List<String> recipe) {
       feedback: Container(
           height: 64,
           width: 64,
-          decoration: BoxDecoration(
-              color: Colors.blueGrey,
-              borderRadius: BorderRadius.all(Radius.circular(16)))),
+          child: Image.asset('assets/items/${ingredients[i]}.png')),
       child: Container(
           //color: Colors.pink,
           height: 64,
@@ -463,4 +631,15 @@ List<Widget> makeStuffList(List<String> recipe) {
           child: Image.asset('assets/items/${ingredients[i]}.png')),
     ),
   );
+}
+
+void setToDefault() {
+  craftingTableContains = List<String>.filled(9, '');
+  recipeChangeNotifier = ValueNotifier<int>(0);
+  healthNotifier = ValueNotifier<int>(3);
+}
+
+void playSound(String sound) async {
+  audioPlayer = await cache.play('sounds/$sound.wav',
+      volume: sound == 'accept' ? 0.7 : 1);
 }
