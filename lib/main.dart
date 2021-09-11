@@ -63,7 +63,141 @@ List<List<String>> recipes = [
     'slab',
     'slab',
     'slab'
-  ]
+  ],
+  [
+    'planks',
+    'planks',
+    'planks',
+    'planks',
+    'redstone_dust',
+    'planks',
+    'planks',
+    'planks',
+    'planks'
+  ],
+  [
+    'cobblestone',
+    'cobblestone',
+    'cobblestone',
+    'cobblestone',
+    'bow',
+    'cobblestone',
+    'cobblestone',
+    'redstone_dust',
+    'cobblestone'
+  ],
+  [
+    'gunpowder',
+    'sand',
+    'gunpowder',
+    'sand',
+    'gunpowder',
+    'sand',
+    'gunpowder',
+    'sand',
+    'gunpowder'
+  ],
+  [
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'iron_ingot',
+    'chest',
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    ''
+  ],
+  [
+    'planks',
+    'planks',
+    'planks',
+    'planks',
+    '',
+    'planks',
+    'planks',
+    'planks',
+    'planks'
+  ],
+  [
+    'iron_ingot',
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'iron_ingot',
+    ''
+  ],
+  [
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'iron_ingot',
+    'stick',
+    'iron_ingot',
+    'iron_ingot',
+    '',
+    'iron_ingot'
+  ],
+  [
+    'gold_ingot',
+    '',
+    'gold_ingot',
+    'gold_ingot',
+    'stick',
+    'gold_ingot',
+    'gold_ingot',
+    'redstone_dust',
+    'gold_ingot',
+  ],
+  [
+    'milk_bucket',
+    'milk_bucket',
+    'milk_bucket',
+    'sugar',
+    'egg',
+    'sugar',
+    'wheat',
+    'wheat',
+    'wheat'
+  ],
+  [
+    'gold_ingot',
+    'gold_ingot',
+    'gold_ingot',
+    'gold_ingot',
+    'apple',
+    'gold_ingot',
+    'gold_ingot',
+    'gold_ingot',
+    'gold_ingot'
+  ],
+  [
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget'
+  ],
+  ['iron_ingot', 'iron_ingot', '', '', 'stick', '', '', 'stick', ''],
+  ['iron_ingot', 'iron_ingot', '', 'iron_ingot', 'stick', '', '', 'stick', ''],
+  [
+    '',
+    'gold_ingot',
+    '',
+    'gold_ingot',
+    'redstone_dust',
+    'gold_ingot',
+    '',
+    'gold_ingot',
+    ''
+  ],
 ];
 
 List<String> names = [
@@ -73,7 +207,21 @@ List<String> names = [
   'Redstone Lamp',
   'Piston',
   'Block of Redstone',
-  'Daylight Detector'
+  'Daylight Detector',
+  'Note Block',
+  'Dispenser',
+  'TNT',
+  'Hopper',
+  'Chest',
+  'Iron Door',
+  'Rail',
+  'Powered Rail',
+  'Cake',
+  'Golden Apple',
+  'Gold Ingot',
+  'Iron Hoe',
+  'Iron Axe',
+  'Clock'
 ];
 
 List<String> craftingTableContains = List<String>.filled(9, '');
@@ -81,6 +229,8 @@ List<String> craftingTableContains = List<String>.filled(9, '');
 ValueNotifier<int> recipeChangeNotifier =
     ValueNotifier<int>(names.length - 1); //length is for debug
 ValueNotifier<int> healthNotifier = ValueNotifier<int>(3);
+ValueNotifier<bool> answerNotifier = ValueNotifier<bool>(false);
+ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
 
 AudioPlayer audioPlayer = AudioPlayer();
 AudioCache cache = AudioCache();
@@ -184,17 +334,37 @@ class _GameWidgetState extends State<GameWidget> {
                     valueListenable: recipeChangeNotifier,
                     builder: (BuildContext context, int value, Widget child) {
                       return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(names[value],
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500)),
-                          Container(
-                            width: 64,
-                            child: Image.asset(
-                                'assets/recipes/${names[value].toLowerCase().replaceAll(' ', '_')}.png'),
+                          Expanded(
+                            flex: 50,
+                            child: Text(names[value],
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500)),
+                          ),
+                          Expanded(
+                            flex: 40,
+                            child: Container(
+                              width: 64,
+                              height: 64,
+                              child: Image.asset(
+                                  'assets/recipes/${names[value].toLowerCase().replaceAll(' ', '_')}.png'),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 10,
+                            child: ValueListenableBuilder(
+                                valueListenable: scoreNotifier,
+                                builder: (BuildContext context, int score,
+                                    Widget child) {
+                                  return Text('$score',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w500));
+                                }),
                           )
                         ],
                       );
@@ -236,13 +406,19 @@ class _GameWidgetState extends State<GameWidget> {
             Expanded(flex: 1, child: Container()),
             Expanded(
               flex: 7,
-              child: ValueListenableBuilder<int>(
-                  valueListenable: recipeChangeNotifier,
-                  builder: (BuildContext context, int value, Widget child) {
+              child: ValueListenableBuilder<bool>(
+                  valueListenable: answerNotifier,
+                  builder:
+                      (BuildContext context, bool isShowing, Widget child) {
                     return AspectRatio(
                       aspectRatio: 1,
-                      child: CraftingTable(List<ValueNotifier<String>>.generate(
-                          9, (i) => ValueNotifier<String>(''))),
+                      child: isShowing
+                          ? CraftingTable(List<ValueNotifier<String>>.generate(
+                              9,
+                              (i) => ValueNotifier<String>(
+                                  recipes[recipeChangeNotifier.value][i])))
+                          : CraftingTable(List<ValueNotifier<String>>.generate(
+                              9, (i) => ValueNotifier<String>(''))),
                     );
                   }),
             ),
@@ -380,22 +556,34 @@ class _AcceptButtonState extends State<AcceptButton>
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (compareRecipesDeeply(
-            craftingTableContains, recipes[recipeChangeNotifier.value])) {
-          playSound('accept');
-          changeRecipe();
-          _animation = acceptAnimation;
-          controller.forward().then((value) => controller.reset());
-        } else {
-          healthNotifier.value--;
-          if (healthNotifier.value != 0) {
-            playSound('decline');
-            changeRecipe();
-            _animation = declineAnimation;
-            controller.forward().then((value) => controller.reset());
+        if (answerNotifier.value == false) {
+          if (compareRecipesDeeply(
+              craftingTableContains, recipes[recipeChangeNotifier.value])) {
+            playSound('accept');
+            scoreNotifier.value++;
+            answerNotifier.value = true;
+            _animation = acceptAnimation;
+            controller.forward().then((value) {
+              answerNotifier.value = false;
+              changeRecipe();
+              controller.reset();
+            });
           } else {
-            setToDefault();
-            gotoDefeatScreen();
+            healthNotifier.value--;
+            if (healthNotifier.value != 0) {
+              playSound('decline');
+              answerNotifier.value = true;
+
+              _animation = declineAnimation;
+              controller.forward().then((value) {
+                answerNotifier.value = false;
+                changeRecipe();
+                controller.reset();
+              });
+            } else {
+              gotoDefeatScreen();
+              //setToDefault();
+            }
           }
         }
       },
@@ -426,7 +614,10 @@ class _AcceptButtonState extends State<AcceptButton>
 
   void gotoDefeatScreen() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => DefeatScreen()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => DefeatScreen(scoreNotifier.value)));
+    print('score: ${scoreNotifier.value}');
   }
 
   void changeRecipe() {
@@ -590,17 +781,21 @@ class _CraftingSlotState extends State<CraftingSlot> {
 }
 
 bool compareRecipesDeeply(List<String> table, List<String> recipe) {
-  Set<List<String>> sameRecipes = {recipe};
+  List<List<String>> sameRecipes = []..add(List.from(recipe));
+
   //Check if recipe is symmetrical about the vertical axis
   for (var i = 0; i < 7; i += 3) {
     if (recipe[i] != recipe[i + 2]) {
       var _recipe = recipe;
+
       for (var j = 0; j < 7; j += 3) {
         var a = _recipe[j];
         _recipe[j] = _recipe[j + 2];
         _recipe[j + 2] = a;
       }
+
       sameRecipes.add(_recipe);
+      print(sameRecipes);
       break;
     }
   }
@@ -637,6 +832,7 @@ void setToDefault() {
   craftingTableContains = List<String>.filled(9, '');
   recipeChangeNotifier = ValueNotifier<int>(0);
   healthNotifier = ValueNotifier<int>(3);
+  scoreNotifier = ValueNotifier<int>(0);
 }
 
 void playSound(String sound) async {
