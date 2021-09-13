@@ -198,6 +198,277 @@ List<List<String>> recipes = [
     'gold_ingot',
     ''
   ],
+  [
+    'glass',
+    'glass',
+    'glass',
+    'glass',
+    'pink_dye',
+    'glass',
+    'glass',
+    'glass',
+    'glass'
+  ],
+  ['planks', '', '', 'planks', 'planks', '', 'planks', 'planks', 'planks'],
+  [
+    'cobblestone',
+    '',
+    '',
+    'cobblestone',
+    'cobblestone',
+    '',
+    'cobblestone',
+    'cobblestone',
+    'cobblestone'
+  ],
+  [
+    'planks',
+    'planks',
+    'planks',
+    'book',
+    'book',
+    'book',
+    'planks',
+    'planks',
+    'planks'
+  ],
+  [
+    'bamboo',
+    'string',
+    'bamboo',
+    'bamboo',
+    '',
+    'bamboo',
+    'bamboo',
+    '',
+    'bamboo'
+  ],
+  [
+    'stick',
+    'stick',
+    'stick',
+    'stick',
+    'leather',
+    'stick',
+    'stick',
+    'stick',
+    'stick'
+  ],
+  [
+    'white_wool',
+    'white_wool',
+    'white_wool',
+    'white_wool',
+    'white_wool',
+    'white_wool',
+    '',
+    'stick',
+    ''
+  ],
+  ['', 'stick', '', 'stick', 'coal', 'stick', 'oak_log', 'oak_log', 'oak_log'],
+  [
+    'stick',
+    'stick',
+    'stick',
+    '',
+    'stick',
+    '',
+    'stick',
+    'smooth_stone_slab',
+    'stick'
+  ],
+  [
+    'cobblestone',
+    'cobblestone',
+    'cobblestone',
+    'cobblestone',
+    '',
+    'cobblestone',
+    'cobblestone',
+    'cobblestone',
+    'cobblestone'
+  ],
+  [
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot'
+  ],
+  [
+    'block_of_iron',
+    'block_of_iron',
+    'block_of_iron',
+    '',
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot'
+  ],
+  [
+    'stick',
+    'stick',
+    'stick',
+    'stick',
+    'white_wool',
+    'stick',
+    'stick',
+    'stick',
+    'stick'
+  ],
+  ['stick', '', 'stick', 'stick', 'stick', 'stick', 'stick', '', 'stick'],
+  ['planks', 'planks', 'planks', 'planks', 'planks', 'planks', '', 'stick', ''],
+  [
+    'planks',
+    'planks',
+    'planks',
+    'planks',
+    'diamond',
+    'planks',
+    'planks',
+    'planks',
+    'planks'
+  ],
+  [
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'furnace',
+    'iron_ingot',
+    'smooth_stone',
+    'smooth_stone',
+    'smooth_stone'
+  ],
+  [
+    '',
+    'book',
+    '',
+    'diamond',
+    'obsidian',
+    'diamond',
+    'obsidian',
+    'obsidian',
+    'obsidian'
+  ],
+  [
+    'crying_obsidian',
+    'crying_obsidian',
+    'crying_obsidian',
+    'glowstone',
+    'glowstone',
+    'glowstone',
+    'crying_obsidian',
+    'crying_obsidian',
+    'crying_obsidian'
+  ],
+  ['flint', 'flint', '', 'planks', 'planks', '', 'planks', 'planks', ''],
+  ['paper', 'paper', '', 'planks', 'planks', '', 'planks', 'planks', ''],
+  ['', 'oak_log', '', 'oak_log', 'furnace', 'oak_log', '', 'oak_log', ''],
+  [
+    'iron_ingot',
+    'iron_ingot',
+    '',
+    'planks',
+    'planks',
+    '',
+    'planks',
+    'planks',
+    ''
+  ],
+  [
+    'glass',
+    'glass',
+    'glass',
+    'glass',
+    'eye_of_ender',
+    'glass',
+    'glass',
+    'ghast_tear',
+    'glass'
+  ],
+  [
+    'obsidian',
+    'obsidian',
+    'obsidian',
+    'obsidian',
+    'eye_of_ender',
+    'obsidian',
+    'obsidian',
+    'obsidian',
+    'obsidian'
+  ],
+  [
+    '',
+    'redstone_torch',
+    '',
+    'redstone_torch',
+    'nether_quartz',
+    'redstone_torch',
+    'stone',
+    'stone',
+    'stone'
+  ],
+  [
+    '',
+    'redstone_dust',
+    '',
+    'redstone_dust',
+    'hay_bale',
+    'redstone_dust',
+    '',
+    'redstone_dust',
+    ''
+  ],
+  [
+    'cobblestone',
+    'cobblestone',
+    'cobblestone',
+    'redstone_dust',
+    'redstone_dust',
+    'nether_quartz',
+    'cobblestone',
+    'cobblestone',
+    'cobblestone'
+  ],
+  [
+    'golden_nugget',
+    'golden_nugget',
+    'golden_nugget',
+    'golden_nugget',
+    'carrot',
+    'golden_nugget',
+    'golden_nugget',
+    'golden_nugget',
+    'golden_nugget'
+  ],
+  [
+    'beetroot',
+    'beetroot',
+    'beetroot',
+    'beetroot',
+    'beetroot',
+    'beetroot',
+    '',
+    'bowl',
+    ''
+  ],
+  [
+    '',
+    'cooked_rabbit',
+    '',
+    'carrot',
+    'baked_potato',
+    'red_mushroom',
+    '',
+    'bowl',
+    ''
+  ],
 ];
 
 List<String> names = [
@@ -221,7 +492,38 @@ List<String> names = [
   'Gold Ingot',
   'Iron Hoe',
   'Iron Axe',
-  'Clock'
+  'Clock',
+  'Pink Stained Glass',
+  'Oak Stairs',
+  'Cobblestone Stairs',
+  'Bookshelf',
+  'Scaffolding',
+  'Item Frame',
+  'Banner',
+  'Campfire',
+  'Armor Stand',
+  'Furnace',
+  'Block of Iron',
+  'Anvil',
+  'Painting',
+  'Ladder',
+  'Oak Sign',
+  'Jukebox',
+  'Blast Furnace',
+  'Enchanting Table',
+  'Respawn Anchor',
+  'Fletching Table',
+  'Cartography Table',
+  'Smoker',
+  'Smithing Table',
+  'End Crystal',
+  'Ender Chest',
+  'Redstone Comparator',
+  'Target',
+  'Observer',
+  'Golden Carrot',
+  'Beetroot Soup',
+  'Rabbit Stew',
 ];
 
 List<String> craftingTableContains = List<String>.filled(9, '');
@@ -241,6 +543,7 @@ final Color secondaryColor = Color(0xffffa000);
 final Color secondaryLightColor = Color(0xffffd149);
 
 void main() {
+  print(names.length);
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MaterialApp(
@@ -336,7 +639,7 @@ class _GameWidgetState extends State<GameWidget> {
                       return Row(
                         children: [
                           Expanded(
-                            flex: 50,
+                            flex: 60,
                             child: Text(names[value],
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -345,7 +648,7 @@ class _GameWidgetState extends State<GameWidget> {
                                     fontWeight: FontWeight.w500)),
                           ),
                           Expanded(
-                            flex: 40,
+                            flex: 30,
                             child: Container(
                               width: 64,
                               height: 64,
