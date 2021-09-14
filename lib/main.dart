@@ -437,15 +437,15 @@ List<List<String>> recipes = [
     'cobblestone'
   ],
   [
-    'golden_nugget',
-    'golden_nugget',
-    'golden_nugget',
-    'golden_nugget',
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget',
     'carrot',
-    'golden_nugget',
-    'golden_nugget',
-    'golden_nugget',
-    'golden_nugget'
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget',
+    'gold_nugget'
   ],
   [
     'beetroot',
@@ -468,6 +468,74 @@ List<List<String>> recipes = [
     '',
     'bowl',
     ''
+  ],
+  [
+    '',
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'redstone_dust',
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    ''
+  ],
+  ['', '', 'stick', '', 'stick', 'string', 'stick', '', 'string'],
+  [
+    'planks',
+    'iron_ingot',
+    'planks',
+    'planks',
+    'planks',
+    'planks',
+    '',
+    'planks',
+    ''
+  ],
+  [
+    'stick',
+    'iron_ingot',
+    'stick',
+    'string',
+    'tripwire_hook',
+    'string',
+    '',
+    'stick',
+    ''
+  ],
+  ['', 'stick', 'string', 'stick', '', 'string', '', 'stick', 'string'],
+  [
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'iron_ingot',
+    '',
+    'iron_ingot'
+  ],
+  [
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot'
+  ],
+  [
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'iron_ingot',
+    '',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot',
+    'iron_ingot'
   ],
 ];
 
@@ -524,7 +592,17 @@ List<String> names = [
   'Golden Carrot',
   'Beetroot Soup',
   'Rabbit Stew',
+  'Compass',
+  'Fishing Rod',
+  'Shield',
+  'Crossbow',
+  'Bow',
+  'Iron Leggins',
+  'Iron Chestplate',
+  'Cauldron',
 ];
+
+List<String> items = [];
 
 List<String> craftingTableContains = List<String>.filled(9, '');
 
@@ -543,6 +621,8 @@ final Color secondaryColor = Color(0xffffa000);
 final Color secondaryLightColor = Color(0xffffd149);
 
 void main() {
+  recipes.forEach((l) => items.addAll(l));
+  items = items.toSet().toList()..remove('');
   print(names.length);
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -1113,6 +1193,11 @@ bool compareRecipesDeeply(List<String> table, List<String> recipe) {
 
 List<Widget> makeStuffList(List<String> recipe) {
   var ingredients = recipe.toSet().where((e) => e != '').toList();
+  while (ingredients.length < 4) {
+    var _items = items..removeWhere((element) => ingredients.contains(element));
+    ingredients.add(_items[Random().nextInt(_items.length)]);
+  }
+  ingredients.shuffle();
 
   return List.generate(
     ingredients.length,
