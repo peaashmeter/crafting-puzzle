@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:minecraft/defeat.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 List<List<String>> recipes = [
   ['string', 'string', '', 'string', 'slimeball', '', '', '', 'string'],
@@ -606,8 +607,8 @@ List<String> items = [];
 
 List<String> craftingTableContains = List<String>.filled(9, '');
 
-ValueNotifier<int> recipeChangeNotifier =
-    ValueNotifier<int>(names.length - 1); //length is for debug
+ValueNotifier<int> recipeChangeNotifier = ValueNotifier<int>(Random().nextInt(
+    names.length)); //(names.indexOf('Fishing Rod')); //length is for debug
 ValueNotifier<int> healthNotifier = ValueNotifier<int>(3);
 ValueNotifier<bool> answerNotifier = ValueNotifier<bool>(false);
 ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
@@ -620,11 +621,20 @@ final Color lightColor = Color(0xffaab6fe);
 final Color secondaryColor = Color(0xffffa000);
 final Color secondaryLightColor = Color(0xffffd149);
 
+InterstitialAd defeatAd;
+bool isTestingAds = false;
+const testAdId = 'ca-app-pub-3940256099942544/1033173712';
+const adId = 'ca-app-pub-2177844474393797/7399937390';
+
 void main() {
   recipes.forEach((l) => items.addAll(l));
   items = items.toSet().toList()..remove('');
   print(names.length);
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+
+  loadAd();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(MaterialApp(
       title: 'Craft Puzzle',
@@ -638,6 +648,22 @@ void main() {
       )));
 }
 
+void loadAd() {
+  InterstitialAd.load(
+      adUnitId: isTestingAds ? testAdId : adId,
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          // Keep a reference to the ad so you can show it later.
+          defeatAd = ad;
+          print('ad loaded');
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          print('InterstitialAd failed to load: $error');
+        },
+      ));
+}
+
 class Game extends StatefulWidget {
   @override
   _GameState createState() => _GameState();
@@ -647,16 +673,20 @@ class _GameState extends State<Game> {
   @override
   void initState() {
     setToDefault();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Crafting Puzzle'),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Crafting Puzzle'),
+        ),
+        body: GameWidget(),
       ),
-      body: GameWidget(),
     );
   }
 }
@@ -999,7 +1029,7 @@ class _AcceptButtonState extends State<AcceptButton>
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => DefeatScreen(scoreNotifier.value)));
+            builder: (context) => DefeatScreen(scoreNotifier.value, defeatAd)));
     print('score: ${scoreNotifier.value}');
   }
 
@@ -1193,7 +1223,7 @@ bool compareRecipesDeeply(List<String> table, List<String> recipe) {
 
 List<Widget> makeStuffList(List<String> recipe) {
   var ingredients = recipe.toSet().where((e) => e != '').toList();
-  while (ingredients.length < 4) {
+  while (ingredients.length < 5) {
     var _items = items..removeWhere((element) => ingredients.contains(element));
     ingredients.add(_items[Random().nextInt(_items.length)]);
   }
@@ -1217,8 +1247,9 @@ List<Widget> makeStuffList(List<String> recipe) {
 }
 
 void setToDefault() {
+  loadAd();
   craftingTableContains = List<String>.filled(9, '');
-  recipeChangeNotifier = ValueNotifier<int>(0);
+  recipeChangeNotifier = ValueNotifier<int>(Random().nextInt(names.length));
   healthNotifier = ValueNotifier<int>(3);
   scoreNotifier = ValueNotifier<int>(0);
 }

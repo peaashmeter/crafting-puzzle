@@ -3,6 +3,7 @@
    <application
         android:label="Crafting Puzzle"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-2177844474393797~6274557989"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -10,6 +11,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
+            
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues
@@ -17,6 +19,7 @@
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
+              
               />
             <!-- Displays an Android View that continues showing the launch screen
                  Drawable until Flutter paints its first frame, then this splash
