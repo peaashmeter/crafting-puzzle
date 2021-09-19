@@ -1224,10 +1224,13 @@ bool compareRecipesDeeply(List<String> table, List<String> recipe) {
 List<Widget> makeStuffList(List<String> recipe) {
   var ingredients = recipe.toSet().where((e) => e != '').toList();
   while (ingredients.length < 5) {
-    var _items = items..removeWhere((element) => ingredients.contains(element));
+    var _items = List.from(items)
+      ..removeWhere((element) => ingredients.contains(element));
+    print('_items.length: ${_items.length}');
     ingredients.add(_items[Random().nextInt(_items.length)]);
   }
   ingredients.shuffle();
+  print(ingredients);
 
   return List.generate(
     ingredients.length,
