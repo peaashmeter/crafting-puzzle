@@ -607,11 +607,13 @@ List<String> items = [];
 
 List<String> craftingTableContains = List<String>.filled(9, '');
 
-ValueNotifier<int> recipeChangeNotifier = ValueNotifier<int>(Random().nextInt(
-    names.length)); //(names.indexOf('Fishing Rod')); //length is for debug
+ValueNotifier<int> recipeChangeNotifier =
+    ValueNotifier<int>(Random().nextInt(names.length));
+// ValueNotifier<int>(names.indexOf('Bookshelf')); //length is for debug
 ValueNotifier<int> healthNotifier = ValueNotifier<int>(3);
 ValueNotifier<bool> answerNotifier = ValueNotifier<bool>(false);
 ValueNotifier<int> scoreNotifier = ValueNotifier<int>(0);
+ValueNotifier<int> streak = ValueNotifier<int>(0);
 
 AudioPlayer audioPlayer = AudioPlayer();
 AudioCache cache = AudioCache();
@@ -778,7 +780,7 @@ class _GameWidgetState extends State<GameWidget> {
                                           color: Colors.white,
                                           fontWeight: FontWeight.w500));
                                 }),
-                          )
+                          ),
                         ],
                       );
                     }),
@@ -973,7 +975,8 @@ class _AcceptButtonState extends State<AcceptButton>
           if (compareRecipesDeeply(
               craftingTableContains, recipes[recipeChangeNotifier.value])) {
             playSound('accept');
-            scoreNotifier.value++;
+            streak.value++;
+            scoreNotifier.value += streak.value ~/ 2 + 1;
             answerNotifier.value = true;
             _animation = acceptAnimation;
             controller.forward().then((value) {
@@ -982,6 +985,7 @@ class _AcceptButtonState extends State<AcceptButton>
               controller.reset();
             });
           } else {
+            streak.value = 0;
             healthNotifier.value--;
             if (healthNotifier.value != 0) {
               playSound('decline');
