@@ -624,9 +624,9 @@ final Color secondaryColor = Color(0xffffa000);
 final Color secondaryLightColor = Color(0xffffd149);
 
 InterstitialAd defeatAd;
-bool isTestingAds = false;
+bool isTestingAds = true;
 const testAdId = 'ca-app-pub-3940256099942544/1033173712';
-const adId = 'ca-app-pub-2177844474393797/7399937390';
+const adId = '';
 
 void main() {
   recipes.forEach((l) => items.addAll(l));
